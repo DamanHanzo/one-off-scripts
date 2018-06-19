@@ -1,5 +1,21 @@
 #! /bin/bash
 set -e
+function checkBranch() {
+	if [ -n "$1" ]; then
+		localbranch=$(git branch | grep -w "$1" | tr -d '[:space:]')
+		if [ -z "$localbranch" ]; then 
+			remotebranch=$(git ls-remote --heads origin "$1" | grep "$1" | tr -d '[:space:]')
+			branchfromremote="origin/$1"
+			if [ -n "$remotebranch" ]; then #make sure the branch exists in the remote repo before checking out the remote branch
+				git checkout --track "$branchfromremote"
+			else
+				printf "${RED}Branch $1 doesn't exist.${NC}\n"
+				sleep 10 
+				exit 127
+			fi
+		fi
+	fi
+}
 if [ -e "diffsraw.diff" ]; then
 	echo "" > diffsraw.diff #clear out the diffsraw file if it exists
 fi
@@ -15,26 +31,17 @@ else
 fi
 echo -n "Please enter branch a: "
 read brancha
+checkBranch "$brancha"
 echo -n "Please enter the branch b: "
 read branchb
+checkBranch "$branchb"
 echo -ne "${GREEN}Sacred DDL${NC} source(default: master): "
 read ddlsource
 if [ -z "$ddlsource" ]; then
 	ddlsource="master" #default to DataGuard if ddl source is isn't specified
 	git checkout "$ddlsource" >/dev/null 2>&1
 else
-	localbranch=$(git branch | grep -w "$ddlsource" | tr -d '[:space:]')
-	if [ -n $localbranch ]; then 
-		git checkout "$ddlsource" >/dev/null 2>&1
-	elif [ -z $localbranch ]; then
-		remotebranch=$(git ls-remote --heads origin "$ddlsource" | grep "$ddlsource" | tr -d '[:space:]')
-		ddlsourcefromremote="origin/$ddlsource"
-		if [ -n $remotebranch ]; then 
-			git checkout --track "$ddlsourcefromremote" >/dev/null 2>&1
-		else
-			printf "${RED}The sacred ddl source branch doesn't exist.${NC}/n"
-		fi
-	fi
+	checkBranch "$ddlsource"
 fi
 { 
 	git diff $brancha..$branchb >/dev/null 2>&1
