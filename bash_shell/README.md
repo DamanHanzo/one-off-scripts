@@ -1,12 +1,12 @@
-##Bash/Shell Scripts
+## Bash/Shell Scripts
 
 All one-off shell scripts are maintained in this directory.
 
-###deployjob.sh
+### deployjob.sh
 
 Deploys local job directory changes to various TED job environments.
 
-####Prerequisite:
+#### Prerequisite:
 
 1. Get the job environments host names and paths to the jobs app directories from fellow tpl dev.
 2. Install dos2unix
