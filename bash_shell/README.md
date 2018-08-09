@@ -8,7 +8,7 @@ Deploys local job directory changes to various TED job environments.
 
 #### Prerequisite:
 
-1. Get the job environments host names and paths to the jobs app directories from fellow tpl devs.
+1. Get the job environment host names and path to the job server's app(where jobs are stored) directory from fellow tpl devs.
 2. Install dos2unix
    - `sudo apt-get install dos2unix`
    - Windows users
